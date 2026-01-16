@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  body {
+    background: url("Gore.png") no-repeat center center fixed;
+    background-size: cover;
+  }
+
+@keyframes float {
+  0%   { transform: translateY(-40px); }
+  50%  { transform: translateY(-55px); }
+  100% { transform: translateY(-40px); }
+}
+
+img {
+  width: 520px;
+  max-width: 85%;
+  height: auto;
+  animation: float 3s ease-in-out infinite;
+  cursor: pointer;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 10vh;
+}
+
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <a href="index.html">
+      <img src="Y2K 3D.png" alt="Y2K Cover">
+    </a>
+  </div>
+</body>
+</html>

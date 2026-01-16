@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YEAR2KILL — Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!--
+    NO STYLING HERE ON PURPOSE
+    This file is MECHANICS ONLY.
+    You will design later.
+  -->
+</head>
+<body>
+
+  <!-- AUTH CONTAINER -->
+  <div id="auth-container">
+
+    <!-- LOGIN FORM -->
+    <form id="login-form">
+      <h2>Login</h2>
+
+      <label>
+        Email
+        <input type="email" id="login-email" required>
+      </label>
+
+      <label>
+        Password
+        <input type="password" id="login-password" required>
+      </label>
+
+      <button type="submit">Login</button>
+
+      <p>
+        No account?
+        <button type="button" id="show-register">Register</button>
+      </p>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="register-form" style="display:none;">
+      <h2>Register</h2>
+
+      <label>
+        Username
+        <input type="text" id="register-username" required>
+      </label>
+
+      <label>
+        Email
+        <input type="email" id="register-email" required>
+      </label>
+
+      <label>
+        Password
+        <input type="password" id="register-password" required>
+      </label>
+
+      <label>
+        Confirm Password
+        <input type="password" id="register-confirm" required>
+      </label>
+
+      <button type="submit">Create Account</button>
+
+      <p>
+        Already have an account?
+        <button type="button" id="show-login">Login</button>
+      </p>
+    </form>
+
+  </div>
+
+  <!-- AUTH LOGIC -->
+  <script src="auth.js"></script>
+
+  <script>
+    // FORM TOGGLE LOGIC (MECHANICS ONLY)
+    const loginForm = document.getElementById("login-form");
+    const registerForm = document.getElementById("register-form");
+
+    document.getElementById("show-register").onclick = () => {
+      loginForm.style.display = "none";
+      registerForm.style.display = "block";
+    };
+
+    document.getElementById("show-login").onclick = () => {
+      registerForm.style.display = "none";
+      loginForm.style.display = "block";
+    };
+
+    // LOGIN SUBMIT
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await loginUser(
+        document.getElementById("login-email").value,
+        document.getElementById("login-password").value
+      );
+    });
+
+    // REGISTER SUBMIT
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await registerUser(
+        document.getElementById("register-username").value,
+        document.getElementById("register-email").value,
+        document.getElementById("register-password").value,
+        document.getElementById("register-confirm").value
+      );
+    });
+  </script>
+
+</body>
+</html>

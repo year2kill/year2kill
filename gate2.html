@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>YEAR2KILL — ACCESS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  /* ===== BASE ===== */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+    color: #fff;
+  }
+
+  /* ===== CONTAINER ===== */
+  .gate {
+    text-align: center;
+  }
+
+  /* ===== FLASHING TEXT ===== */
+  @keyframes flash {
+    0%   { color: #ff0000; }
+    50%  { color: #000; }
+    100% { color: #ff0000; }
+  }
+
+  .label {
+    font-size: 32px;
+    letter-spacing: 3px;
+    animation: flash 1s infinite;
+    margin-bottom: 20px;
+  }
+
+  /* ===== INPUT ===== */
+  input {
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+    font-size: 22px;
+    padding: 10px 14px;
+    text-align: center;
+    outline: none;
+    width: 260px;
+  }
+
+  input::placeholder {
+    color: #777;
+  }
+
+  /* ===== COUNTDOWN ===== */
+  .countdown {
+    margin-top: 30px;
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+
+  /* ===== ERROR SHAKE ===== */
+  .shake {
+    animation: shake 0.3s;
+  }
+
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="gate" id="gate">
+  <div class="label">ENTER PASSWORD</div>
+
+  <input
+    type="password"
+    id="password"
+    placeholder="••••••••••"
+    autofocus
+  >
+
+  <div class="countdown" id="countdown">
+    LOADING…
+  </div>
+</div>
+
+<script>
+  /* ===== PASSWORD ===== */
+  const CORRECT_PASSWORD = "fernfernfern";
+
+  /* ===== REDIRECT AFTER SUCCESS ===== */
+  const DESTINATION = "index3.html";
+
+  /* ===== SET DROP DATE HERE ===== */
+  const DROP_DATE = new Date("2026-02-01T00:00:00"); 
+  // ^^^ EDIT THIS DATE/TIME ONLY ^^^
+
+  /* ===== PASSWORD CHECK ===== */
+  const input = document.getElementById("password");
+  const gate = document.getElementById("gate");
+
+  input.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      if (input.value === CORRECT_PASSWORD) {
+        window.location.href = DESTINATION;
+      } else {
+        gate.classList.add("shake");
+        input.value = "";
+        setTimeout(() => gate.classList.remove("shake"), 300);
+      }
+    }
+  });
+
+  /* ===== COUNTDOWN TIMER ===== */
+  function updateCountdown() {
+    const now = new Date();
+    const diff = DROP_DATE - now;
+
+    if (diff <= 0) {
+      document.getElementById("countdown").textContent = "OUT NOW";
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("countdown").textContent =
+      `${days}D ${hours}H ${minutes}M ${seconds}S`;
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>YEAR2KILL</title>
+
+<style>
+  /* --- RESET / BASE --- */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  body {
+    background: url("Gore.png") no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+  }
+
+  /* --- FLOATING LOGO --- */
+  @keyframes float {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .logo {
+    width: 520px;
+    max-width: 85%;
+    height: auto;
+    animation: float 3s ease-in-out infinite;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* --- LAYOUT CONTAINER --- */
+  .container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 10vh;
+    text-align: center;
+  }
+
+  /* =====================================================
+     UI BAR CONTROL ZONE (SAFE TO EDIT)
+     ===================================================== */
+
+  .nav-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-top: 28px; /* SAME AS ORIGINAL .nav MARGIN */
+  }
+
+  .ui-bar {
+    position: absolute;
+
+    /* --- POSITION CONTROLS --- */
+    top: 78%;              /* Y POSITION */
+    left: 50%;             /* X POSITION */
+    transform: translate(-50%, -50%);
+
+    /* --- SCALE CONTROLS --- */
+    width: 140%;           /* X SCALE (stretch across icons) */
+    height: auto;          /* KEEP PROPORTIONS */
+
+    /* --- OPTIONAL FINE TUNING --- */
+    /* transform: translate(-50%, -50%) translateY(0px); */
+
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===================================================== */
+
+  /* --- NAV ICON BAR --- */
+  .nav {
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+    position: relative;
+    z-index: 1; /* ENSURES ICONS SIT ABOVE BAR */
+  }
+
+.nav a img {
+  width: 75px;
+  height: 75px;
+  opacity: 1;
+
+  filter:
+    drop-shadow(0 2px 4px rgba(0,0,0,0.85))
+    drop-shadow(0 0 6px rgba(0,0,0,0.6));
+
+  transition: transform 0.2s ease;
+}
+
+  .nav a img:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div>
+
+      <!-- LOGO -->
+      <a href="index3.html">
+        <img src="y2k2026.png" alt="YEAR2KILL" class="logo">
+      </a>
+
+      <!-- NAV + UI BAR -->
+      <div class="nav-wrapper">
+
+        <!-- UI SPINE / BAR -->
+        <img src="UIBAR.png" class="ui-bar" alt="">
+
+        <!-- NAV ICONS -->
+        <div class="nav">
+          <a href="index3.html"><img src="home.png" alt="Home"></a>
+          <a href="shop2.html"><img src="shop.png" alt="Shop"></a>
+          <a href="login3.html"><img src="login.png" alt="Login"></a>
+          <a href="archive5.html"><img src="archive.png" alt="Archive"></a>
+          <a href="sn8k9.html"><img src="snake.png" alt="Snake!"></a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html

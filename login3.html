@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>YEAR2KILL — Portal Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+/* =================================
+   GLOBAL RESET (LAYOUT ONLY)
+================================= */
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+/* =================================
+   STACK CONTAINER
+================================= */
+#stack {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =================================
+   PORTAL SOCKET
+================================= */
+#portal-frame {
+  width: 70vmin;
+  height: 70vmin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ASCII LAYER */
+#ascii {
+  white-space: pre;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: #111;
+  user-select: none;
+}
+
+/* =================================
+   LOGIN CONTAINER (CENTERED)
+================================= */
+#auth-container {
+  margin-top: 24px; /* spacing ONLY */
+  text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div id="stack">
+
+  <!-- ================================
+       ASCII BIO-PORTAL
+  ================================= -->
+  <div id="portal-frame">
+    <pre id="ascii"></pre>
+  </div>
+
+  <!-- ================================
+       AUTH CONTAINER
+  ================================= -->
+  <div id="auth-container">
+
+    <!-- LOGIN FORM -->
+    <form id="login-form">
+      <h2>Login</h2>
+
+      <label>
+        Email<br>
+        <input type="email" id="login-email" required>
+      </label><br><br>
+
+      <label>
+        Password<br>
+        <input type="password" id="login-password" required>
+      </label><br><br>
+
+      <button type="submit">Login</button>
+
+      <p>
+        No account?
+        <button type="button" id="show-register">Register</button>
+      </p>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="register-form" style="display:none;">
+      <h2>Register</h2>
+
+      <label>
+        Username<br>
+        <input type="text" id="register-username" required>
+      </label><br><br>
+
+      <label>
+        Email<br>
+        <input type="email" id="register-email" required>
+      </label><br><br>
+
+      <label>
+        Password<br>
+        <input type="password" id="register-password" required>
+      </label><br><br>
+
+      <label>
+        Confirm Password<br>
+        <input type="password" id="register-confirm" required>
+      </label><br><br>
+
+      <button type="submit">Create Account</button>
+
+      <p>
+        Already have an account?
+        <button type="button" id="show-login">Login</button>
+      </p>
+    </form>
+
+  </div>
+
+</div>
+
+<!-- ================================
+     AUTH LOGIC
+================================= -->
+<script src="auth.js"></script>
+
+<script>
+/* FORM TOGGLE */
+const loginForm = document.getElementById("login-form");
+const registerForm = document.getElementById("register-form");
+
+document.getElementById("show-register").onclick = () => {
+  loginForm.style.display = "none";
+  registerForm.style.display = "block";
+};
+
+document.getElementById("show-login").onclick = () => {
+  registerForm.style.display = "none";
+  loginForm.style.display = "block";
+};
+
+/* LOGIN SUBMIT */
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await loginUser(
+    document.getElementById("login-email").value,
+    document.getElementById("login-password").value
+  );
+});
+
+/* REGISTER SUBMIT */
+registerForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await registerUser(
+    document.getElementById("register-username").value,
+    document.getElementById("register-email").value,
+    document.getElementById("register-password").value,
+    document.getElementById("register-confirm").value
+  );
+});
+</script>
+
+<!-- ================================
+     ASCII PORTAL ENGINE
+================================= -->
+<script>
+(() => {
+  const pre = document.getElementById("ascii");
+
+  const CELL_SIZE = 11;
+  const SCALE = 1.6;
+  const SPEED = 0.45;
+  const RAMP = " .:-=+*#%@MW";
+  const RLEN = RAMP.length - 1;
+
+  let cols = 0;
+  let rows = 0;
+
+  function resize() {
+    const size = Math.floor(
+      Math.min(window.innerWidth, window.innerHeight) * 0.7
+    );
+    cols = Math.floor(size / CELL_SIZE);
+    rows = cols;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function field(x, y, t) {
+    let r = Math.sqrt(x*x + y*y);
+    let a = Math.atan2(y, x);
+
+    r *= 1 + 0.06 * Math.sin(t * 0.9);
+    a += Math.log(r + 0.25) * 1.8 + t * SPEED;
+
+    if (r < 0.22) return 0;
+
+    let ring = Math.sin(6.5 / r + r * 3.2 - t);
+    let v = ring * 0.5 + 0.5;
+
+    let disk = Math.exp(-Math.pow(r - 0.55, 2) * 14);
+    v += disk * 0.9;
+
+    v = Math.pow(v, 1.7);
+    return Math.max(0, Math.min(1, v));
+  }
+
+  function frame(ms) {
+    const t = ms * 0.001;
+    let out = "";
+
+    for (let j = 0; j < rows; j++) {
+      const y = ((j / (rows - 1)) * 2 - 1) * SCALE;
+      for (let i = 0; i < cols; i++) {
+        const x = ((i / (cols - 1)) * 2 - 1) * SCALE;
+        out += RAMP[Math.floor(field(x, y, t) * RLEN)];
+      }
+      out += "\n";
+    }
+
+    pre.textContent = out;
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>

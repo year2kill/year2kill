@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>YEAR2KILL — Archive</title>
+
+<style>
+/* =========================
+   RESET / BASE (GLOBAL)
+========================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: url("Gore.png") no-repeat center center fixed;
+  background-size: cover;
+  overflow-x: hidden;
+}
+
+/* =========================
+   FLOATING LOGO (GLOBAL)
+========================= */
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+.logo {
+  width: 520px;
+  max-width: 85%;
+  height: auto;
+  animation: float 3s ease-in-out infinite;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+}
+
+/* =========================
+   GLOBAL LAYOUT SHELL
+========================= */
+.container {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 10vh;
+  text-align: center;
+}
+
+/* =========================
+   UI BAR CONTROL ZONE
+========================= */
+.nav-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 28px;
+}
+
+.ui-bar {
+  position: absolute;
+  top: 78%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140%;
+  height: auto;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* =========================
+   NAV ICONS (UNCHANGED)
+========================= */
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 26px;
+  position: relative;
+  z-index: 1;
+}
+
+.nav a img {
+  width: 75px;
+  height: 75px;
+  filter:
+    drop-shadow(0 2px 4px rgba(0,0,0,0.85))
+    drop-shadow(0 0 6px rgba(0,0,0,0.6));
+  transition: transform 0.2s ease;
+}
+
+.nav a img:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================
+   ARCHIVE CONTENT (UNCHANGED)
+========================= */
+.y2k-mag-viewer {
+  position: relative;
+  margin: 50px auto 120px;
+  user-select: none;
+}
+
+.y2k-mag-viewer.cover {
+  width: min(90vw, 400px);
+  aspect-ratio: 8.5 / 11;
+  top: -5px;
+}
+
+.y2k-mag-viewer.inner {
+  width: min(90vw, 800px);
+  aspect-ratio: 11 / 17;
+  top: -300px;
+}
+
+.y2k-mag-viewer img.magazine {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* NAV BUTTONS */
+.y2k-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 200px;
+  height: 200px;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.y2k-mag-viewer.cover .y2k-nav.left  { left: -280px; }
+.y2k-mag-viewer.cover .y2k-nav.right { right: -280px; }
+
+.y2k-mag-viewer.inner .y2k-nav.left  { left: -250px; }
+.y2k-mag-viewer.inner .y2k-nav.right { right: -250px; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .y2k-nav.left  { left: -60px !important; }
+  .y2k-nav.right { right: -60px !important; }
+}
+
+@media (max-width: 600px) {
+  .y2k-nav {
+    width: 56px;
+    height: 56px;
+  }
+  .y2k-nav.left  { left: -40px !important; }
+  .y2k-nav.right { right: -40px !important; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div>
+
+    <!-- LOGO -->
+    <a href="index3.html">
+      <img src="y2k2026.png" alt="YEAR2KILL" class="logo">
+    </a>
+
+    <!-- NAV + UI BAR -->
+    <div class="nav-wrapper">
+      <img src="UIBAR.png" class="ui-bar" alt="">
+      <div class="nav">
+        <a href="index3.html"><img src="home.png"></a>
+        <a href="shop2.html"><img src="shop.png"></a>
+        <a href="login3.html"><img src="login.png"></a>
+        <a href="archive5.html"><img src="archive.png"></a>
+        <a href="sn8k9.html"><img src="snake.png"></a>
+      </div>
+    </div>
+
+    <!-- ARCHIVE PAGE CONTENT -->
+    <div class="y2k-mag-viewer cover" id="viewer">
+
+      <img
+        src="Y2K Website Pages/y2kp1.png"
+        id="magazine"
+        class="magazine"
+      >
+
+      <img
+        src="Y2K Website Pages/handleft.png"
+        class="y2k-nav left"
+        onclick="prevPage()"
+      >
+
+      <img
+        src="Y2K Website Pages/handright.png"
+        class="y2k-nav right"
+        onclick="nextPage()"
+      >
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ARCHIVE LOGIC — UNTOUCHED */
+const pages = [
+  "y2kp1.png","0.png","1.png","2.png","3.png","4.png",
+  "5.png","6.png","7.png","8.png","9.png","10.png","y2kp24.png"
+];
+
+let currentIndex = 0;
+const magazine = document.getElementById("magazine");
+const viewer   = document.getElementById("viewer");
+
+function updatePage() {
+  viewer.classList.remove("cover","inner");
+  viewer.classList.add(
+    currentIndex === 0 || currentIndex === pages.length - 1
+      ? "cover" : "inner"
+  );
+
+  const src = "Y2K Website Pages/" + pages[currentIndex];
+  const img = new Image();
+  img.onload = () => magazine.src = src;
+  img.src = src;
+}
+
+function nextPage(){ if(currentIndex < pages.length-1){ currentIndex++; updatePage(); } }
+function prevPage(){ if(currentIndex > 0){ currentIndex--; updatePage(); } }
+updatePage();
+</script>
+
+</body>
+</html>

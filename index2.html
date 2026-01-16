@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>YEAR2KILL</title>
+
+<style>
+  /* --- RESET / BASE --- */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  body {
+    background: url("Gore.png") no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+  }
+
+  /* --- FLOATING LOGO --- */
+  @keyframes float {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .logo {
+    width: 520px;
+    max-width: 85%;
+    height: auto;
+    animation: float 3s ease-in-out infinite;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* --- LAYOUT CONTAINER --- */
+  .container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 10vh; /* controls vertical placement */
+    text-align: center;
+  }
+
+  /* --- NAV ICON BAR --- */
+  .nav {
+    margin-top: 28px;
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+  }
+
+.nav a img {
+  width: 75px;
+  height: 75x;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+
+  .nav a img:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div>
+      <!-- LOGO -->
+      <a href="index3.html">
+        <img src="Y2K 3D.png" alt="YEAR2KILL" class="logo">
+      </a>
+
+      <!-- NAV ICONS -->
+      <div class="nav">
+        <a href="index.html">
+          <img src="home.png" alt="Home">
+        </a>
+        <a href="shop.html">
+          <img src="shop.png" alt="Shop">
+        </a>
+		<a href="login3.html">
+          <img src="login.png" alt="Shop">
+        </a>
+		<a href="archive4.html">
+          <img src="archive.png" alt="Shop">
+        </a>
+		<a href="sn8k9.html">
+          <img src="snake.png" alt="Snake!">
+        </a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

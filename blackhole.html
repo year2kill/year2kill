@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASCII Bio-Portal</title>
+
+<style>
+/* ================================
+   GLOBAL RESET
+================================ */
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+}
+
+/* ================================
+   PORTAL SOCKET (CENTERED, SQUARE)
+================================ */
+#portal-frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 70vmin;
+  height: 70vmin;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+/* ================================
+   ASCII RENDER LAYER
+================================ */
+#ascii {
+  white-space: pre;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 11px;          /* VISIBILITY */
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: #111;              /* DENSE / FLESH */
+  user-select: none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="portal-frame">
+  <pre id="ascii"></pre>
+</div>
+
+<script>
+(() => {
+  const pre = document.getElementById("ascii");
+
+  /* ================================
+     DESIGN KNOBS (TUNED)
+  ================================ */
+  const CELL_SIZE = 11;
+  const SCALE = 1.6;
+  const SPEED = 0.45;
+
+  /* Heavy, biological ASCII ramp */
+  const RAMP = " .:-=+*#%@MW";
+  const RLEN = RAMP.length - 1;
+
+  let cols = 0;
+  let rows = 0;
+
+  /* ================================
+     FORCE SQUARE GRID (CRITICAL)
+  ================================ */
+  function resize() {
+    const size = Math.floor(
+      Math.min(window.innerWidth, window.innerHeight) * 0.7
+    );
+    cols = Math.floor(size / CELL_SIZE);
+    rows = cols;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  /* ================================
+     CORE FIELD FUNCTION
+     (BIO-INTERFACE BRUTALISM)
+  ================================ */
+  function field(x, y, t) {
+    let r = Math.sqrt(x*x + y*y);
+    let a = Math.atan2(y, x);
+
+    /* Pressable mass (subtle compression) */
+    r *= 1 + 0.06 * Math.sin(t * 0.9);
+
+    /* Torsion */
+    a += Math.log(r + 0.25) * 1.8 + t * SPEED;
+
+    /* HARD EVENT HORIZON */
+    if (r < 0.22) return 0;
+
+    /* Damaged biological rings */
+    let ring = Math.sin(6.5 / r + r * 3.2 - t);
+    let v = ring * 0.5 + 0.5;
+
+    /* Accretion mass (detail pushed outward) */
+    let disk = Math.exp(-Math.pow(r - 0.55, 2) * 14);
+    v += disk * 0.9;
+
+    /* Brutalist contrast */
+    v = Math.pow(v, 1.7);
+
+    return Math.max(0, Math.min(1, v));
+  }
+
+  /* ================================
+     RENDER LOOP
+  ================================ */
+  function frame(ms) {
+    const t = ms * 0.001;
+    let out = "";
+
+    for (let j = 0; j < rows; j++) {
+      const y = ((j / (rows - 1)) * 2 - 1) * SCALE;
+      for (let i = 0; i < cols; i++) {
+        const x = ((i / (cols - 1)) * 2 - 1) * SCALE;
+        const v = field(x, y, t);
+        out += RAMP[Math.floor(v * RLEN)];
+      }
+      out += "\n";
+    }
+
+    pre.textContent = out;
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>

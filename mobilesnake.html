@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YEAR2KILL — Snake (LOCKED)</title>
+
+<style>
+/* =========================================
+   GLOBAL RESET
+========================================= */
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body{
+  background: url("Gore.png") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: monospace;
+}
+
+/* =========================================
+   FIXED BACK BUTTON
+========================================= */
+#backLink{
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 9999;
+}
+
+#backLink img{
+  width: 300px;
+  height: auto;
+  cursor: pointer;
+}
+
+/* =========================================
+   LOCKED DESIGN STAGE
+========================================= */
+#stage{
+  position: relative;
+  width: 960px;
+  height: 1800px;
+  transform-origin: center center;
+}
+
+/* =========================================
+   PHONE BACK
+========================================= */
+#phoneBack{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 960px;
+  height: auto;
+  transform: translateY(275px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* =========================================
+   GAME SCREEN
+========================================= */
+#screen{
+  position: absolute;
+  left: 300px;
+  top: 520px;
+  width: 359px;
+  height: 377px;
+  pointer-events: none;
+  filter: contrast(1.25) saturate(1.2);
+  z-index: 5;
+}
+
+/* =========================================
+   PHONE FRONT
+========================================= */
+#phoneFront{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 960px;
+  height: auto;
+  transform: translateY(275px);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* =========================================
+   MOBILE CONTROL BUTTONS
+========================================= */
+.controlStack{
+  position: absolute;
+  top: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  z-index: 20;
+  pointer-events: auto;
+}
+
+.controlStack img{
+  width: 120px;
+  height: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* LEFT SIDE (UP / DOWN) */
+#controlsLeft{
+  left: -140px;
+}
+
+/* RIGHT SIDE (LEFT / RIGHT) */
+#controlsRight{
+  right: -140px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BACK BUTTON -->
+<a href="Index.html" id="backLink">
+  <img src="backbutton.png" alt="Back">
+</a>
+
+<!-- GAME STAGE -->
+<div id="stage">
+
+  <img id="phoneBack" src="KILLPHONE1.png">
+  <canvas id="screen"></canvas>
+  <img id="phoneFront" src="KILLPHONE1_FRONT.png">
+
+  <!-- MOBILE CONTROLS -->
+  <div id="controlsLeft" class="controlStack">
+    <img src="up.png" id="btnUp" alt="Up">
+    <img src="down.png" id="btnDown" alt="Down">
+  </div>
+
+  <div id="controlsRight" class="controlStack">
+    <img src="left.png" id="btnLeft" alt="Left">
+    <img src="right.png" id="btnRight" alt="Right">
+  </div>
+
+</div>
+
+<!-- AUDIO -->
+<audio id="sndEat" src="eat.wav" preload="auto"></audio>
+<audio id="sndDie" src="die.wav" preload="auto"></audio>
+<audio id="sndRespawn" src="respawn.wav" preload="auto"></audio>
+
+<script>
+/* =========================================
+   SCALE STAGE
+========================================= */
+const stage = document.getElementById("stage");
+
+function scaleStage(){
+  const BASE_W = 960;
+  const BASE_H = 1800;
+  const scale = Math.min(
+    window.innerWidth / BASE_W,
+    window.innerHeight / BASE_H
+  );
+  stage.style.transform = `scale(${scale * 1.15})`;
+}
+
+window.addEventListener("resize", scaleStage);
+scaleStage();
+
+/* =========================================
+   AUDIO
+========================================= */
+const sndEat = document.getElementById("sndEat");
+const sndDie = document.getElementById("sndDie");
+const sndRespawn = document.getElementById("sndRespawn");
+
+function play(sound){
+  sound.currentTime = 0;
+  sound.play();
+}
+
+/* =========================================
+   SNAKE CONFIG
+========================================= */
+const canvas = document.getElementById("screen");
+const ctx = canvas.getContext("2d");
+
+const TILE = 13;
+const COLS = 27;
+const ROWS = 29;
+const SPEED = 110;
+
+canvas.width = 359;
+canvas.height = 377;
+
+/* =========================================
+   GAME STATE
+========================================= */
+let snake, dir, nextDir, food, dead;
+
+function reset(){
+  play(sndRespawn);
+  snake = [
+    {x: 13, y: 14},
+    {x: 12, y: 14},
+    {x: 11, y: 14}
+  ];
+  dir = nextDir = {x:1,y:0};
+  dead = false;
+  spawnFood();
+}
+
+function spawnFood(){
+  while(true){
+    const x = Math.floor(Math.random()*COLS);
+    const y = Math.floor(Math.random()*ROWS);
+    if(!snake.some(s=>s.x===x&&s.y===y)){
+      food={x,y};
+      return;
+    }
+  }
+}
+
+/* =========================================
+   GAME LOOP
+========================================= */
+function step(){
+  if(dead) return;
+  dir = nextDir;
+
+  const head = snake[0];
+  const nx = head.x + dir.x;
+  const ny = head.y + dir.y;
+
+  if(nx<0||ny<0||nx>=COLS||ny>=ROWS || snake.some(s=>s.x===nx&&s.y===ny)){
+    dead = true;
+    play(sndDie);
+    return;
+  }
+
+  snake.unshift({x:nx,y:ny});
+
+  if(nx===food.x && ny===food.y){
+    play(sndEat);
+    spawnFood();
+  }else{
+    snake.pop();
+  }
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const scale = Math.min(
+    canvas.width/(COLS*TILE),
+    canvas.height/(ROWS*TILE)
+  );
+
+  const t = TILE * scale;
+  const ox = (canvas.width - COLS*t)/2;
+  const oy = (canvas.height - ROWS*t)/2;
+
+  ctx.fillStyle="#000";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="red";
+  ctx.fillRect(ox+food.x*t, oy+food.y*t, t, t);
+
+  snake.forEach(s=>{
+    ctx.fillRect(ox+s.x*t, oy+s.y*t, t, t);
+  });
+
+  if(dead){
+    ctx.fillStyle="rgba(0,0,0,.6)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="red";
+    ctx.font="20px monospace";
+    ctx.textAlign="center";
+    ctx.fillText("LINEAGE TERMINATED",canvas.width/2,canvas.height/2);
+    ctx.fillText("PRESS R",canvas.width/2,canvas.height/2+28);
+  }
+}
+
+/* =========================================
+   INPUT HANDLING
+========================================= */
+document.addEventListener("keydown",e=>{
+  const k=e.key.toLowerCase();
+  if(k==="r") reset();
+  if((k==="w"||k==="arrowup") && dir.y===0) nextDir={x:0,y:-1};
+  if((k==="s"||k==="arrowdown") && dir.y===0) nextDir={x:0,y:1};
+  if((k==="a"||k==="arrowleft") && dir.x===0) nextDir={x:-1,y:0};
+  if((k==="d"||k==="arrowright") && dir.x===0) nextDir={x:1,y:0};
+});
+
+/* MOBILE BUTTON INPUT */
+function goUp(){ if(dir.y===0) nextDir={x:0,y:-1}; }
+function goDown(){ if(dir.y===0) nextDir={x:0,y:1}; }
+function goLeft(){ if(dir.x===0) nextDir={x:-1,y:0}; }
+function goRight(){ if(dir.x===0) nextDir={x:1,y:0}; }
+
+btnUp.addEventListener("pointerdown", goUp);
+btnDown.addEventListener("pointerdown", goDown);
+btnLeft.addEventListener("pointerdown", goLeft);
+btnRight.addEventListener("pointerdown", goRight);
+
+/* =========================================
+   INIT
+========================================= */
+reset();
+setInterval(()=>{
+  step();
+  draw();
+}, SPEED);
+</script>
+
+</body>
+</html>
